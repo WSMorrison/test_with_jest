@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-const { game, newGame, showScore, addTurn, lightsOn, showTurns } = require('../game');
+const { game, newGame, showScore, addTurn, lightsOn, showTurns, playerTurn } = require('../game');
 
 beforeAll(() => {
     let fs = require('fs');
@@ -80,11 +80,16 @@ describe('gameplay workds properly', () => {
     test('should add correct class to light up button', () => {
         let button = document.getElementById(game.currentGame[0]);
         lightsOn(game.currentGame[0]);
-        expect(button.classList).toContain(game.currentGame[0] + 'light');
+        expect(button.classList).toContain('light');
     });
     test('showTurns should update game.turnNumber', () => {
         game.turnNumber = 81;
         showTurns();
         expect(game.turnNumber).toBe(0);
+    });
+    test('should increment the score if the turn is correct', () => {
+        game.playerMoves.push(game.currentGame[0]);
+        playerTurn();
+        expect(game.score).toBe(1);
     });
 });
