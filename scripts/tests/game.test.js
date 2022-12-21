@@ -3,6 +3,8 @@
  */
 const { game, newGame, showScore, addTurn, lightsOn, showTurns, playerTurn } = require('../game');
 
+jest.spyOn(window, 'alert').mockImplementation(() => {});
+
 beforeAll(() => {
     let fs = require('fs');
     let fileContents = fs.readFileSync('index.html', 'utf-8');
@@ -11,28 +13,28 @@ beforeAll(() => {
     document.close();
 });
 
-describe('game object contains correct keys', () => {
-    test('score key exists', () => { 
+describe('Check the game object contains the correct keys.', () => {
+    test('The score key exists.', () => { 
         expect('score' in game).toBe(true);
     });
-    test('currentGame key exists', () => { 
+    test('The currentGame key exists.', () => { 
         expect('currentGame' in game).toBe(true);
     });
-    test('playerMoves key exists', () => { 
+    test('The playerMoves key exists.', () => { 
         expect('playerMoves' in game).toBe(true);
     });
-    test('choices key exists', () => { 
+    test('The choices key exists.', () => { 
         expect('choices' in game).toBe(true);
     });
-    test('choices contain correct ids', () => {
+    test('The choices key contains the correct ids.', () => {
         expect(game.choices).toEqual(['button1', 'button2', 'button3', 'button4']);
     });
-    test('turnNumber key exists', () => {
+    test('The turnNumber key exists.', () => {
         expect('turnNumber' in game).toBe(true);
     });
 });
 
-describe('newGame works correctly', () => {
+describe('Check newGame works correctly.', () => {
     beforeAll(() => {
         game.score = 42;
         game.playerMoves = ['button1', 'button2'];
@@ -40,19 +42,19 @@ describe('newGame works correctly', () => {
         document.getElementById('score').innerText = '81';
         newGame();
     });
-    test('should set the game score to zero', () => {
+    test('Should set the game score to zero.', () => {
         expect(game.score).toEqual(0);
     });
-    test('should be one element in currentGame array', () => {
+    test('Should be one element in currentGame array.', () => {
         expect(game.currentGame.length).toBe(1);
     });
-    test('should clear playerMoves array', () => {
+    test('Should clear playerMoves array.', () => {
         expect(game.playerMoves.length).toBe(0);
     });
-    test('should display 0 for element with id score', () => {
+    test('Should display 0 for element with id score.', () => {
         expect(document.getElementById('score').innerText).toEqual(0);
     });
-    test('expect data-listener to be true', () => {
+    test('Expect data-listener to be true.', () => {
         newGame();
         const elements = document.getElementsByClassName('circle');
         for (let element of elements) {
@@ -61,7 +63,7 @@ describe('newGame works correctly', () => {
     });
 });
 
-describe('gameplay workds properly', () => {
+describe('Check gameplay works properly.', () => {
     beforeEach(() => {
         game.score = 0;
         game.currentGame = [];
@@ -73,23 +75,28 @@ describe('gameplay workds properly', () => {
         game.currentGame = [];
         game.playerMoves = [];
     });
-    test('addTurn adds a new turn to the game', () => {
+    test('The addTurn function adds a new turn to the game.', () => {
         addTurn();
         expect(game.currentGame.length).toBe(2);
     });
-    test('should add correct class to light up button', () => {
+    test('Should add correct class to light up button.', () => {
         let button = document.getElementById(game.currentGame[0]);
         lightsOn(game.currentGame[0]);
         expect(button.classList).toContain('light');
     });
-    test('showTurns should update game.turnNumber', () => {
+    test('The showTurns function should update game.turnNumber.', () => {
         game.turnNumber = 81;
         showTurns();
         expect(game.turnNumber).toBe(0);
     });
-    test('should increment the score if the turn is correct', () => {
+    test('Should increment the score if the turn is correct.', () => {
         game.playerMoves.push(game.currentGame[0]);
         playerTurn();
         expect(game.score).toBe(1);
+    });
+    test('Should call an alert if the move is wrong.', () => {
+        game.playerMoves.push('wrong');
+        playerTurn();
+        expect(window.alert).toBeCalledWith('Wrong Move!');
     });
 });
