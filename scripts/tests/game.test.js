@@ -99,4 +99,14 @@ describe('Check gameplay works properly.', () => {
         playerTurn();
         expect(window.alert).toBeCalledWith('Wrong Move!');
     });
+    test('Should toggle turnInProgress to true', () => {
+        showTurns();
+        expect(game.turnInProgress).toBe(true);
+    });
+    test('Clicking during computer sequence should fail.', () => {
+        showTurns();
+        game.lastButton = '';
+        document.getElementById('button2').click();
+        expect(game.lastButton).toEqual('');
+    });
 });
